@@ -68,17 +68,40 @@ module axi5_lite_slave(
     
    
     // Wakeup signals  
-    input  AWAKEUP 
+    input  AWAKEUP ,
    
    // Parity check signals
    
+   // Register interfaces
+   output addr     ,
+   input  din      ,
+   input  din_val  ,
+   output dout     ,
+   output dout_val,
    
   
 );
 
 
     // Regs/Wires
+    reg AWREADY_int;
+    reg awlatched;
     
     
+    
+    // Write address channel logic
+    
+    always @(posedge ACLK or negedge ARESETn)
+    begin
+        if(!ARESETn) begin
+            AWREADY_int <= 0;
+            awlatched <= 0;
+        end else if (!awlatched)
+            AWREADY_int <= 1;
+        else   
+           AWREADY_int <= 0; 
+    end
+    
+    assign AWREADY = AWREADY_int;
     
 endmodule
